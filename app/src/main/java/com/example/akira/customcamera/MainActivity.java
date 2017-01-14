@@ -22,7 +22,13 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
          Camera.PictureCallback, SurfaceHolder.Callback {
@@ -107,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        mSavePath = new File(Environment.getExternalStorageDirectory(),"capture.jpg");
         findViewById(R.id.camera_button).setOnClickListener(this);
         mView = (SurfaceView) findViewById(R.id.preview);
         mImage = (ImageView) findViewById(R.id.small_image);
@@ -120,6 +125,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String s = df.format(new Date());
+        StringBuffer fileName = new StringBuffer("M");
+        fileName.append(s).append(".jpg");
+        mSavePath = new File(Environment.getExternalStorageDirectory(),fileName.toString());
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(mSavePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,fileOutputStream);
