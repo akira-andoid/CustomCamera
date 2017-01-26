@@ -23,7 +23,8 @@
         android:id="@+id/camera_button"
         android:layout_centerHorizontal="true"
         android:padding="10dp"
-        android:background="@android:drawable/btn_default" />
+        android:background="@android:drawable/btn_default"
+        android:elevation="0dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -33,4 +34,12 @@
         android:layout_alignParentEnd="false"
         android:id="@+id/small_image"
         android:padding="10dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/sepia_image"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
