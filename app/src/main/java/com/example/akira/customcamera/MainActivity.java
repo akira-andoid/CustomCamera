@@ -1,5 +1,6 @@
 package com.example.akira.customcamera;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -12,7 +13,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -31,7 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener,
+public class MainActivity extends Activity implements View.OnClickListener,
          Camera.PictureCallback, SurfaceHolder.Callback {
 
     File mSavePath;
@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StringBuffer fileName = new StringBuffer("M");
         fileName.append(s).append(".jpg");
         mSavePath = new File(Environment.getExternalStorageDirectory(), fileName.toString());
-
-
+        ColorChangeTask task = new ColorChangeTask();
+        task.execute(bitmap);
     }
 
     @Override
@@ -154,15 +154,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPreExecute() {
-            android.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
             Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-            if (prev != null) {
+           if (prev != null) {
                 ft.remove(prev);
             }
             ft.addToBackStack(null);
             WaitFragment wf = WaitFragment.newInstance(1);
             wf.show(getFragmentManager(),"dialog");
-
         }
 
         @Override

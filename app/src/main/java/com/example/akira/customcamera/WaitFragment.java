@@ -1,15 +1,10 @@
 package com.example.akira.customcamera;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.zip.Inflater;
 
 
 /**
@@ -32,7 +27,8 @@ public class WaitFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int mNum = savedInstanceState.getInt("num");
+//        int mNum = savedInstanceState.getInt("num");
+        int mNum = 1;
         int style = DialogFragment.STYLE_NORMAL,theme = android.R.style.Theme_Holo;
         switch (mNum) {
             case 1: style = DialogFragment.STYLE_NO_FRAME; break;
