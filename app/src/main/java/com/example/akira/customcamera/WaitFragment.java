@@ -1,48 +1,48 @@
 package com.example.akira.customcamera;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link WaitFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class WaitFragment extends DialogFragment {
 
-    static WaitFragment newInstance(int num) {
-        // Required empty public constructor
-        WaitFragment wf = new WaitFragment();
+    MainActivity mainActivity;
+
+    public static WaitFragment newInstance(String title,String message) {
+        WaitFragment waitFragment = new WaitFragment();
         Bundle args = new Bundle();
-        args.putInt("num",num);
-        wf.setArguments(args);
-        return wf;
+        args.putString("Title",title);
+        args.putString("Message",message);
+        waitFragment.setArguments(args);
+        return waitFragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        int mNum = savedInstanceState.getInt("num");
-        int mNum = 1;
-        int style = DialogFragment.STYLE_NORMAL,theme = android.R.style.Theme_Holo;
-        switch (mNum) {
-            case 1: style = DialogFragment.STYLE_NO_FRAME; break;
-            case 2: style = DialogFragment.STYLE_NO_TITLE; break;
-            case 3: style = DialogFragment.STYLE_NO_INPUT; break;
-            default: break;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof MainActivity)) {
+            throw new UnsupportedOperationException("許可されていません");
         }
-        setStyle(style,theme);
+        mainActivity = (MainActivity) activity;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mainActivity = null;
+    }
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wait, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        ProgressDialog progressDialog = new ProgressDialog(mainActivity);
+        String title = getArguments().getString("Title",null);
+        String message = getArguments().getString("Message",null);
+        progressDialog.setTitle(title);
+        progressDialog.setMessage(message);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        return progressDialog;
     }
 }

@@ -134,6 +134,8 @@ public class MainActivity extends Activity implements View.OnClickListener,
         mSavePath = new File(Environment.getExternalStorageDirectory(), fileName.toString());
         ColorChangeTask task = new ColorChangeTask();
         task.execute(bitmap);
+//        WaitFragment wf = WaitFragment.newInstance("Please wait","少々お待ちください");
+//        wf.show(getFragmentManager(),"dialog");
     }
 
     @Override
@@ -153,18 +155,6 @@ public class MainActivity extends Activity implements View.OnClickListener,
     private class ColorChangeTask extends AsyncTask<Bitmap,Void,Bitmap> {
 
         @Override
-        protected void onPreExecute() {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-           if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-            WaitFragment wf = WaitFragment.newInstance(1);
-            wf.show(getFragmentManager(),"dialog");
-        }
-
-        @Override
         protected Bitmap doInBackground(Bitmap... urls) {
 
             Bitmap src = urls[0];
@@ -182,16 +172,17 @@ public class MainActivity extends Activity implements View.OnClickListener,
                             (y * 128) >> 8);
                 }
             }
-            src.setPixels(pixels,0,width,0,0,width,height);
+            Bitmap dst = src.copy(Bitmap.Config.ARGB_8888,true);
+            dst.setPixels(pixels,0,width,0,0,width,height);
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(mSavePath);
-                src.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                dst.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
                 mediaScannerConnection = new MediaScannerConnection(getApplicationContext(),mediaScannerConnectionClient);
                 mediaScannerConnection.connect();
             } catch (FileNotFoundException e) {
                 Log.e("Error", e.toString());
             }
-            return src;
+            return dst;
         }
 
         @Override
