@@ -3,6 +3,7 @@ package com.example.akira.customcamera;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -38,6 +39,9 @@ public class MainActivity extends Activity implements View.OnClickListener,
     Camera mCamera;
     SurfaceView mView;
     ImageView mImage;
+    ImageView sImage;
+    FragmentManager fragmentManager;
+
     private MediaScannerConnection mediaScannerConnection;
     MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
             new MediaScannerConnection.MediaScannerConnectionClient() {
@@ -118,15 +122,19 @@ public class MainActivity extends Activity implements View.OnClickListener,
         findViewById(R.id.camera_button).setOnClickListener(this);
         mView = (SurfaceView) findViewById(R.id.preview);
         mImage = (ImageView) findViewById(R.id.small_image);
+        sImage = (ImageView) findViewById(R.id.sepia_image);
         mView.getHolder().addCallback(this);
         mView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mView.setOnClickListener(this);
         mCamera = Camera.open();
+        fragmentManager = getFragmentManager();
     }
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,options);
         SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         String s = df.format(new Date());
         StringBuffer fileName = new StringBuffer("M");
@@ -134,8 +142,6 @@ public class MainActivity extends Activity implements View.OnClickListener,
         mSavePath = new File(Environment.getExternalStorageDirectory(), fileName.toString());
         ColorChangeTask task = new ColorChangeTask();
         task.execute(bitmap);
-//        WaitFragment wf = WaitFragment.newInstance("Please wait","少々お待ちください");
-//        wf.show(getFragmentManager(),"dialog");
     }
 
     @Override
@@ -153,6 +159,13 @@ public class MainActivity extends Activity implements View.OnClickListener,
     }
 
     private class ColorChangeTask extends AsyncTask<Bitmap,Void,Bitmap> {
+
+        WaitFragment wf = WaitFragment.newInstance("Please wait","少々お待ちください");
+
+        @Override
+        protected void onPreExecute() {
+            wf.show(fragmentManager, "dialog");
+        }
 
         @Override
         protected Bitmap doInBackground(Bitmap... urls) {
@@ -187,7 +200,8 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            mImage.setImageBitmap(result);
+            wf.dismiss();
+            sImage.setImageBitmap(result);
             mCamera.startPreview();
         }
     }
