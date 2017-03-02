@@ -4,4 +4,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="please_wait">しばらくお待ちください</string>
+    <string name="preview_norm">Normal Preview</string>
+    <string name="preview_sep">sepia Preview</string>
+    <string name="camera_button">Camera Button</string>
+    <string name="gallery_button">Gallery Button</string>
+    <string name="title_activity_photo">PhotoActivity</string>
 </resources>

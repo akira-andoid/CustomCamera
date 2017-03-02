@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
     tools:context="com.example.akira.customcamera.MainActivity">
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/camera_button"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:background="@android:drawable/btn_default"
-        style="@style/Widget.AppCompat.ImageButton" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -26,7 +15,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"
         android:id="@+id/small_image"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:contentDescription="@string/preview_norm" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -34,7 +24,31 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/sepia_image"
         android:layout_alignParentLeft="true"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/preview_sep" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_camera"
+        android:id="@+id/camera_button"
+        android:background="@android:drawable/ic_menu_camera"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/camera_button"
+        android:layout_margin="10dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_gallery"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/camera_button"
+        android:layout_toStartOf="@+id/camera_button"
+        android:id="@+id/gallery_button"
+        android:contentDescription="@string/gallery_button" />
 
     <SurfaceView
         android:layout_width="match_parent"

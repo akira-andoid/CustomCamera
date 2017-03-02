@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -120,11 +121,11 @@ public class MainActivity extends Activity implements View.OnClickListener,
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.camera_button).setOnClickListener(this);
+        findViewById(R.id.gallery_button).setOnClickListener(this);
         mView = (SurfaceView) findViewById(R.id.preview);
         mImage = (ImageView) findViewById(R.id.small_image);
         sImage = (ImageView) findViewById(R.id.sepia_image);
         mView.getHolder().addCallback(this);
-        mView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mView.setOnClickListener(this);
         mCamera = Camera.open();
         fragmentManager = getFragmentManager();
@@ -152,6 +153,10 @@ public class MainActivity extends Activity implements View.OnClickListener,
                 break;
             case R.id.preview:
                 mCamera.autoFocus(null);
+                break;
+            case R.id.gallery_button:
+                Intent intent = new Intent(this,PhotoActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
