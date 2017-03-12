@@ -1,9 +1,15 @@
 package com.example.akira.customcamera;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 
 /**
  * Created by Akira on 2017/03/01.
@@ -11,8 +17,17 @@ import android.widget.BaseAdapter;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
+    private Bitmap [] bitmaps;
 
-    ImageAdapter(Context context) {
+    ImageAdapter(Context context,ContentResolver resolver) {
+        Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,null,null,null);
+        int loopCount = cursor.getCount();
+        for ( ; loopCount >0 ; loopCount--) {
+            long id = cursor.getLong(cursor.getColumnIndex("_id"));
+            Bitmap thumbNail = MediaStore.Images.Thumbnails.getThumbnail(resolver,id, MediaStore.Images.Thumbnails.MICRO_KIND,null);
+            bitmaps[loopCount] = thumbNail;
+            cursor.moveToNext();
+        }
         mContext = context;
     }
 
@@ -28,11 +43,22 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 0;
+        int i = bitmaps.length;
+        return i;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        ImageView imageView;
+        if (convertView == null) {
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(85,85));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(8,8,8,8);
+        } else {
+            imageView = (ImageView) convertView;
+        }
+        imageView.setImageBitmap(bitmaps[position]);
+        return imageView;
     }
 }

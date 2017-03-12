@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PhotoActivity"></activity>
+        <activity android:name=".PhotoActivity"
+            android:label="Photo">
+        </activity>
     </application>
 
 </manifest>
