@@ -17,15 +17,17 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private Bitmap [] bitmaps;
+    private Bitmap bitmaps[];
 
     ImageAdapter(Context context,ContentResolver resolver) {
         Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,null,null,null);
+        cursor.moveToFirst();
         int loopCount = cursor.getCount();
-        for ( ; loopCount >0 ; loopCount--) {
-            long id = cursor.getLong(cursor.getColumnIndex("_id"));
+        long id = cursor.getLong(cursor.getColumnIndex("_id"));
+        bitmaps = new Bitmap[loopCount];
+        for ( int i = 0; i < loopCount ; i++ ) {
             Bitmap thumbNail = MediaStore.Images.Thumbnails.getThumbnail(resolver,id, MediaStore.Images.Thumbnails.MICRO_KIND,null);
-            bitmaps[loopCount] = thumbNail;
+            bitmaps[i] = thumbNail;
             cursor.moveToNext();
         }
         mContext = context;
