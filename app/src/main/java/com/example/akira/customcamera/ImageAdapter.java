@@ -23,10 +23,10 @@ public class ImageAdapter extends BaseAdapter {
         Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,null,null,null);
         cursor.moveToFirst();
         int loopCount = cursor.getCount();
-        long id = cursor.getLong(cursor.getColumnIndex("_id"));
         bitmaps = new Bitmap[loopCount];
         for ( int i = 0; i < loopCount ; i++ ) {
-            Bitmap thumbNail = MediaStore.Images.Thumbnails.getThumbnail(resolver,id, MediaStore.Images.Thumbnails.MICRO_KIND,null);
+            long id = cursor.getLong(cursor.getColumnIndex("_id"));
+            Bitmap thumbNail = MediaStore.Images.Thumbnails.getThumbnail(resolver,id, MediaStore.Images.Thumbnails.MINI_KIND,null);
             bitmaps[i] = thumbNail;
             cursor.moveToNext();
         }

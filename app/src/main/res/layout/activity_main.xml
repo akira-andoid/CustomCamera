@@ -41,14 +41,15 @@
         android:layout_margin="10dp" />
 
     <ImageButton
+        android:id="@+id/gallery_button"
+        style="@android:style/Widget.DeviceDefault.ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/camera_button"
         android:layout_toStartOf="@+id/camera_button"
-        android:id="@+id/gallery_button"
-        android:contentDescription="@string/gallery_button" />
+        android:contentDescription="@string/gallery_button"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
 
     <SurfaceView
         android:layout_width="match_parent"
