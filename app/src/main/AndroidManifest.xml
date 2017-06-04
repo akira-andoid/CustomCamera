@@ -23,6 +23,9 @@
         <activity android:name=".PhotoActivity"
             android:label="Photo">
         </activity>
+        <activity android:name=".SlideShow"
+            android:label="Slide">
+        </activity>
     </application>
 
 </manifest>

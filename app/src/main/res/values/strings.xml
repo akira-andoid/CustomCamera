@@ -8,4 +8,6 @@
     <string name="camera_button">Camera Button</string>
     <string name="gallery_button">Gallery Button</string>
     <string name="title_activity_photo">PhotoActivity</string>
+    <string name="button_fwd">Button Forward</string>
+    <string name="button_prev">Button prev</string>
 </resources>
