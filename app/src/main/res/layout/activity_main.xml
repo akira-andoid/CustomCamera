@@ -8,37 +8,25 @@
     android:background="#000000"
     tools:context="com.example.akira.customcamera.MainActivity">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="false"
-        android:id="@+id/small_image"
-        android:padding="10dp"
-        android:contentDescription="@string/preview_norm" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/sepia_image"
+    <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/preview"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:padding="10dp"
-        android:layout_alignParentStart="true"
-        android:contentDescription="@string/preview_sep" />
+        android:layout_alignParentStart="true" />
 
     <ImageButton
+        android:id="@+id/camera_button"
+        style="@style/Widget.AppCompat.ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        android:id="@+id/camera_button"
-        android:background="@android:drawable/ic_menu_camera"
-        style="@style/Widget.AppCompat.ImageButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@android:drawable/ic_menu_camera"
         android:contentDescription="@string/camera_button"
-        android:layout_margin="10dp" />
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <ImageButton
         android:id="@+id/gallery_button"
@@ -51,11 +39,23 @@
         android:contentDescription="@string/gallery_button"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
 
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/preview"
-        android:layout_alignParentTop="true"
+    <ImageView
+        android:id="@+id/small_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/preview_norm"
+        android:padding="10dp" />
+
+    <ImageView
+        android:id="@+id/sepia_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/preview_sep"
+        android:padding="10dp" />
 </RelativeLayout>
