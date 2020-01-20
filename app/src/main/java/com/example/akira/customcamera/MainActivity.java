@@ -1,10 +1,7 @@
 package com.example.akira.customcamera;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -60,15 +57,21 @@ public class MainActivity extends Activity implements View.OnClickListener,
             };
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mCamera.release();
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_main);
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mCamera.stopPreview();
+        findViewById(R.id.camera_button).setOnClickListener(this);
+        findViewById(R.id.gallery_button).setOnClickListener(this);
+        mView = (SurfaceView) findViewById(R.id.preview);
+        mImage = (ImageView) findViewById(R.id.small_image);
+        sImage = (ImageView) findViewById(R.id.sepia_image);
+        mView.getHolder().addCallback(this);
+        mView.setOnClickListener(this);
+        mCamera = Camera.open();
+        fragmentManager = getFragmentManager();
     }
 
     @Override
@@ -114,24 +117,6 @@ public class MainActivity extends Activity implements View.OnClickListener,
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main);
-
-        findViewById(R.id.camera_button).setOnClickListener(this);
-        findViewById(R.id.gallery_button).setOnClickListener(this);
-        mView = (SurfaceView) findViewById(R.id.preview);
-        mImage = (ImageView) findViewById(R.id.small_image);
-        sImage = (ImageView) findViewById(R.id.sepia_image);
-        mView.getHolder().addCallback(this);
-        mView.setOnClickListener(this);
-        mCamera = Camera.open();
-        fragmentManager = getFragmentManager();
-    }
-
-    @Override
     public void onPictureTaken(byte[] data, Camera camera) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 4;
@@ -162,6 +147,19 @@ public class MainActivity extends Activity implements View.OnClickListener,
                 break;
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCamera.stopPreview();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCamera.release();
+    }
+
 
     private class ColorChangeTask extends AsyncTask<Bitmap,Void,Bitmap> {
 
