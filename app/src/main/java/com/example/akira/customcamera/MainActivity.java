@@ -1,24 +1,33 @@
 package com.example.akira.customcamera;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.hardware.Camera;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.params.OutputConfiguration;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.Environment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Display;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Surface;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -27,15 +36,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener,
-         Camera.PictureCallback, SurfaceHolder.Callback {
+public class MainActivity extends Activity implements View.OnClickListener {
 
     File mSavePath;
-    Camera mCamera;
+    CameraManager mCameraManager;
+    CameraDevice.StateCallback mStateCallback;
+    Handler cameraHandler;
     SurfaceView mView;
+    SurfaceHolder holder;
+    Surface mSurface;
+    CameraCharacteristics mCameraCharacteristics;
+    OutputConfiguration simpleOutputConfigration;
     ImageView mImage;
     ImageView sImage;
     FragmentManager fragmentManager;
@@ -65,69 +79,53 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
         findViewById(R.id.camera_button).setOnClickListener(this);
         findViewById(R.id.gallery_button).setOnClickListener(this);
-        mView = (SurfaceView) findViewById(R.id.preview);
-        mImage = (ImageView) findViewById(R.id.small_image);
-        sImage = (ImageView) findViewById(R.id.sepia_image);
-        mView.getHolder().addCallback(this);
+        mView = findViewById(R.id.preview);
+        holder = mView.getHolder();
+        mSurface = holder.getSurface();
+        simpleOutputConfigration = new OutputConfiguration(mSurface);
+        final List<OutputConfiguration> cameraConfigrationList = new ArrayList();
+        cameraConfigrationList.add(simpleOutputConfigration);
+        mImage = findViewById(R.id.small_image);
+        sImage = findViewById(R.id.sepia_image);
         mView.setOnClickListener(this);
-        mCamera = Camera.open();
+
+        mCameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
+        String[] cameraID;
+        int MY_REQUEST_IS_CAMERA = 1;
+
+        mStateCallback = new CameraDevice.StateCallback() {
+            @Override
+            public void onOpened(@NonNull CameraDevice camera) {
+                camera.createCaptureSessionByOutputConfigurations
+                        (cameraConfigrationList,statecallback,null);
+            }
+
+            @Override
+            public void onDisconnected(@NonNull CameraDevice camera) {
+                camera.close();
+            }
+
+            @Override
+            public void onError(@NonNull CameraDevice camera, int error) {
+                camera.close();
+            }
+        };
+        cameraHandler = new Handler();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                    MY_REQUEST_IS_CAMERA);
+        }
+        try {
+            cameraID = mCameraManager.getCameraIdList();
+            mCameraManager.openCamera(cameraID[0],mStateCallback,cameraHandler);
+            mCameraCharacteristics = mCameraManager.getCameraCharacteristics(cameraID[0]);
+        } catch (Exception e) {
+
+        }
+
         fragmentManager = getFragmentManager();
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        try {
-            mCamera.setPreviewDisplay(mView.getHolder());
-        } catch (Exception e) {
-            Log.e("error", e.toString());
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format,
-                               int width, int height) {
-        mCamera.stopPreview();
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        int dispWidth = display.getWidth();
-        int dispHeight = display.getHeight();
-        Camera.Parameters params = mCamera.getParameters();
-        try {
-            List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-            Camera.Size size = sizes.get(0);
-            ViewGroup.LayoutParams layoutParams = mView.getLayoutParams();
-            float wScale = (float) dispWidth / size.width;
-            float hScale = (float) dispHeight / size.height;
-            float scale = wScale > hScale ? hScale : wScale;
-            layoutParams.width = (int) (size.width * scale);
-            layoutParams.height = (int) (size.height * scale);
-            mView.setLayoutParams(layoutParams);
-            params.setPreviewSize(size.width, size.height);
-            mCamera.setParameters(params);
-        } catch (Exception e) {
-            Log.e("error", e.toString());
-            params.setPreviewSize(width, height);
-            mCamera.setParameters(params);
-        }
-        mCamera.startPreview();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-    }
-
-    @Override
-    public void onPictureTaken(byte[] data, Camera camera) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,options);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        String s = df.format(new Date());
-        StringBuffer fileName = new StringBuffer("M");
-        fileName.append(s).append(".jpg");
-        mSavePath = new File(Environment.getExternalStorageDirectory(), fileName.toString());
-        ColorChangeTask task = new ColorChangeTask();
-        task.execute(bitmap);
     }
 
     @Override
@@ -151,13 +149,11 @@ public class MainActivity extends Activity implements View.OnClickListener,
     @Override
     public void onPause() {
         super.onPause();
-        mCamera.stopPreview();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCamera.release();
     }
 
 
