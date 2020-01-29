@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     SurfaceHolder holder;
     Surface mSurface;
     CameraCharacteristics mCameraCharacteristics;
-    OutputConfiguration simpleOutputConfigration;
+    OutputConfiguration simpleOutputConfiguration;
     ImageView mImage;
     ImageView sImage;
     FragmentManager fragmentManager;
@@ -82,9 +82,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mView = findViewById(R.id.preview);
         holder = mView.getHolder();
         mSurface = holder.getSurface();
-        simpleOutputConfigration = new OutputConfiguration(mSurface);
-        final List<OutputConfiguration> cameraConfigrationList = new ArrayList();
-        cameraConfigrationList.add(simpleOutputConfigration);
+        simpleOutputConfiguration = new OutputConfiguration(mSurface);
+        final List<OutputConfiguration> cameraConfigurationList = new ArrayList();
+        cameraConfigurationList.add(simpleOutputConfiguration);
         mImage = findViewById(R.id.small_image);
         sImage = findViewById(R.id.sepia_image);
         mView.setOnClickListener(this);
@@ -97,7 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onOpened(@NonNull CameraDevice camera) {
                 camera.createCaptureSessionByOutputConfigurations
-                        (cameraConfigrationList,statecallback,null);
+                        (cameraConfigurationList,statecallback,null);
             }
 
             @Override
@@ -132,10 +132,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.camera_button:
-                mCamera.takePicture(null, null, this);
                 break;
             case R.id.preview:
-                mCamera.autoFocus(null);
                 break;
             case R.id.gallery_button:
                 Intent intent = new Intent(this,PhotoActivity.class);
