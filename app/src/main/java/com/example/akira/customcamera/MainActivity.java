@@ -83,7 +83,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         holder = mView.getHolder();
         mSurface = holder.getSurface();
         simpleOutputConfiguration = new OutputConfiguration(mSurface);
-        final List<OutputConfiguration> cameraConfigurationList = new ArrayList();
+        List cameraConfigurationList = new ArrayList();
         cameraConfigurationList.add(simpleOutputConfiguration);
         mImage = findViewById(R.id.small_image);
         sImage = findViewById(R.id.sepia_image);
