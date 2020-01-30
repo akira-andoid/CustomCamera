@@ -43,16 +43,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     File mSavePath;
     CameraManager mCameraManager;
-    CameraDevice.StateCallback mStateCallback;
     Handler cameraHandler;
     SurfaceView mView;
     SurfaceHolder holder;
     Surface mSurface;
     CameraCharacteristics mCameraCharacteristics;
-    OutputConfiguration simpleOutputConfiguration;
     ImageView mImage;
     ImageView sImage;
     FragmentManager fragmentManager;
+    CameraDevice mCameraDevice = null;
+    private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
+
+        @Override
+        public void onOpened(@NonNull CameraDevice camera) {
+            mCameraDevice = camera;
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice camera) {
+            camera.close();
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice camera, int error) {
+            camera.close();
+        }
+    };
 
     private MediaScannerConnection mediaScannerConnection;
     MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
@@ -76,40 +92,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-
-        findViewById(R.id.camera_button).setOnClickListener(this);
-        findViewById(R.id.gallery_button).setOnClickListener(this);
         mView = findViewById(R.id.preview);
         holder = mView.getHolder();
         mSurface = holder.getSurface();
-        simpleOutputConfiguration = new OutputConfiguration(mSurface);
-        List cameraConfigurationList = new ArrayList();
-        cameraConfigurationList.add(simpleOutputConfiguration);
         mImage = findViewById(R.id.small_image);
         sImage = findViewById(R.id.sepia_image);
+        findViewById(R.id.camera_button).setOnClickListener(this);
+        findViewById(R.id.gallery_button).setOnClickListener(this);
         mView.setOnClickListener(this);
 
         mCameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
+        OutputConfiguration simpleOutputConfiguration = new OutputConfiguration(mSurface);
+        List cameraConfigurationList = new ArrayList();
+        cameraConfigurationList.add(simpleOutputConfiguration);
+
         String[] cameraID;
         int MY_REQUEST_IS_CAMERA = 1;
 
-        mStateCallback = new CameraDevice.StateCallback() {
-            @Override
-            public void onOpened(@NonNull CameraDevice camera) {
-                camera.createCaptureSessionByOutputConfigurations
-                        (cameraConfigurationList,statecallback,null);
-            }
-
-            @Override
-            public void onDisconnected(@NonNull CameraDevice camera) {
-                camera.close();
-            }
-
-            @Override
-            public void onError(@NonNull CameraDevice camera, int error) {
-                camera.close();
-            }
-        };
         cameraHandler = new Handler();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
