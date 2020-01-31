@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraDevice;
@@ -52,11 +53,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     ImageView sImage;
     FragmentManager fragmentManager;
     CameraDevice mCameraDevice = null;
+    List cameraConfigurationList = new ArrayList();
+    OutputConfiguration simpleOutputConfiguration;
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             mCameraDevice = camera;
+            CreateCameraSession();
         }
 
         @Override
@@ -67,6 +71,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         @Override
         public void onError(@NonNull CameraDevice camera, int error) {
             camera.close();
+        }
+    };
+
+    CameraCaptureSession.StateCallback sessionStateCallback = new CameraCaptureSession.StateCallback() {
+        @Override
+        public void onConfigured(@NonNull CameraCaptureSession session) {
+
+        }
+
+        @Override
+        public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+
         }
     };
 
@@ -102,9 +118,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mView.setOnClickListener(this);
 
         mCameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
-        OutputConfiguration simpleOutputConfiguration = new OutputConfiguration(mSurface);
-        List cameraConfigurationList = new ArrayList();
-        cameraConfigurationList.add(simpleOutputConfiguration);
 
         String[] cameraID;
         int MY_REQUEST_IS_CAMERA = 1;
@@ -125,6 +138,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         fragmentManager = getFragmentManager();
+    }
+
+    private void CreateCameraSession() {
+        simpleOutputConfiguration = new OutputConfiguration(mSurface);
+        cameraConfigurationList.add(simpleOutputConfiguration);
+        try {
+            mCameraDevice.createCaptureSessionByOutputConfigurations
+                    (cameraConfigurationList, sessionStateCallback, null);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
@@ -152,7 +176,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
     }
-
 
     private class ColorChangeTask extends AsyncTask<Bitmap,Void,Bitmap> {
 
@@ -198,7 +221,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         protected void onPostExecute(Bitmap result) {
             wf.dismiss();
             sImage.setImageBitmap(result);
-            mCamera.startPreview();
         }
     }
 
