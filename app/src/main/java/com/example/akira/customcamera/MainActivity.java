@@ -42,6 +42,8 @@ import java.util.List;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
+    protected final String TAG = "CustomCamera";
+
     File mSavePath;
     CameraManager mCameraManager;
     Handler cameraHandler;
@@ -60,7 +62,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             mCameraDevice = camera;
-            CreateCameraSession();
+            createCameraSession();
         }
 
         @Override
@@ -134,20 +136,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mCameraManager.openCamera(cameraID[0],mStateCallback,cameraHandler);
             mCameraCharacteristics = mCameraManager.getCameraCharacteristics(cameraID[0]);
         } catch (Exception e) {
-
+            Log.e(TAG,"Error");
         }
 
         fragmentManager = getFragmentManager();
     }
 
-    private void CreateCameraSession() {
+    private void createCameraSession() {
         simpleOutputConfiguration = new OutputConfiguration(mSurface);
         cameraConfigurationList.add(simpleOutputConfiguration);
         try {
             mCameraDevice.createCaptureSessionByOutputConfigurations
                     (cameraConfigurationList, sessionStateCallback, null);
         } catch (Exception e) {
-
+            Log.e(TAG,"Error");
         }
     }
 
