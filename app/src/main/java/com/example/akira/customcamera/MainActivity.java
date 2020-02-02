@@ -13,6 +13,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -57,6 +58,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     CameraDevice mCameraDevice = null;
     List cameraConfigurationList = new ArrayList();
     OutputConfiguration simpleOutputConfiguration;
+    CameraCaptureSession mCameraCaptureSession;
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
@@ -79,7 +81,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     CameraCaptureSession.StateCallback sessionStateCallback = new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(@NonNull CameraCaptureSession session) {
-
+            mCameraCaptureSession = session;
+            createCaptureRequest();
         }
 
         @Override
@@ -151,6 +154,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         } catch (Exception e) {
             Log.e(TAG,"Error");
         }
+    }
+
+    private viod createCaptureRequest() {
+        CaptureRequest.Builder builder = new CaptureRequest.Builder();
+
     }
 
     @Override
