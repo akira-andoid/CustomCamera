@@ -59,6 +59,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     List cameraConfigurationList = new ArrayList();
     OutputConfiguration simpleOutputConfiguration;
     CameraCaptureSession mCameraCaptureSession;
+    CaptureRequest.Builder builder;
+    CaptureRequest mCaptureRequest;
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
@@ -90,6 +92,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         }
     };
+
+    CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
+        @Override
+        public void onCaptureStarted(@NonNull CameraCaptureSession session,
+                                     @NonNull CaptureRequest request, long timestamp, long frameNumber) {
+            super.onCaptureStarted(session, request, timestamp, frameNumber);
+        }
+    }
 
     private MediaScannerConnection mediaScannerConnection;
     MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
@@ -156,8 +166,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private viod createCaptureRequest() {
-        CaptureRequest.Builder builder = new CaptureRequest.Builder();
+    private void createCaptureRequest() {
+        try {
+            builder= mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_MANUAL);
+            builder.addTarget(mSurface);
+            mCaptureRequest = builder.build();
+        } catch (Exception e) {
+            Log.e(TAG,"Error");
+        }
 
     }
 
