@@ -14,6 +14,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -45,7 +46,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     protected final String TAG = "CustomCamera";
 
-    File mSavePath;
+    File mSavePath = Environment.getExternalStorageDirectory();
     CameraManager mCameraManager;
     Handler cameraHandler;
     SurfaceView mView;
@@ -95,11 +96,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
         @Override
-        public void onCaptureStarted(@NonNull CameraCaptureSession session,
-                                     @NonNull CaptureRequest request, long timestamp, long frameNumber) {
-            super.onCaptureStarted(session, request, timestamp, frameNumber);
+        public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                       @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+            super.onCaptureCompleted(session, request, result);
         }
-    }
+    };
 
     private MediaScannerConnection mediaScannerConnection;
     MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
@@ -174,13 +175,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         } catch (Exception e) {
             Log.e(TAG,"Error");
         }
+    }
 
+    private void onTakePicture() {
+        try {
+            mCameraCaptureSession.stopRepeating();
+        } catch (Exception e) {
+            Log.e(TAG,"error");
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.camera_button:
+                onTakePicture();
                 break;
             case R.id.preview:
                 break;
