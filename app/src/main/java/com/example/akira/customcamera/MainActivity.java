@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.Surface;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.PixelCopy;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -177,19 +178,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void onTakePicture() {
+    private void takePicture() {
         try {
             mCameraCaptureSession.stopRepeating();
+            Bitmap dest;
+            PixelCopy.request(mSurface,dest,listener,cameraHandler);
         } catch (Exception e) {
             Log.e(TAG,"error");
         }
     }
 
+    PixelCopy.OnPixelCopyFinishedListener listener = new PixelCopy.OnPixelCopyFinishedListener() {
+        @Override
+        public void onPixelCopyFinished(int copyResult) {
+            if (copyResult != PixelCopy.SUCCESS) {
+                Log.e(TAG,"Error");
+            }
+        }
+    };
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.camera_button:
-                onTakePicture();
+                takePicture();
                 break;
             case R.id.preview:
                 break;
