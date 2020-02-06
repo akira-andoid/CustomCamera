@@ -3,11 +3,9 @@ package com.example.akira.customcamera;
 import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -24,7 +22,6 @@ import android.os.Environment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.Display;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.app.ActivityCompat;
 import android.view.SurfaceHolder;
@@ -39,7 +36,6 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +46,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     File mSavePath = Environment.getExternalStorageDirectory();
     CameraManager mCameraManager;
     Handler cameraHandler;
-    SurfaceView mView;
+    SurfaceView mSurfaceView;
     SurfaceHolder holder;
     Surface mSurface;
     CameraCharacteristics mCameraCharacteristics;
@@ -125,14 +121,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        mView = findViewById(R.id.preview);
-        holder = mView.getHolder();
+        mSurfaceView = findViewById(R.id.preview);
+        holder = mSurfaceView.getHolder();
         mSurface = holder.getSurface();
         mImage = findViewById(R.id.small_image);
         sImage = findViewById(R.id.sepia_image);
         findViewById(R.id.camera_button).setOnClickListener(this);
         findViewById(R.id.gallery_button).setOnClickListener(this);
-        mView.setOnClickListener(this);
+        mSurfaceView.setOnClickListener(this);
 
         mCameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
 
@@ -181,8 +177,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void takePicture() {
         try {
             mCameraCaptureSession.stopRepeating();
-            Bitmap dest;
-            PixelCopy.request(mSurface,dest,listener,cameraHandler);
+            Bitmap destBitmap = Bitmap.createBitmap(mSurfaceView.getHeight(), mSurfaceView.getWidth(),
+                    Bitmap.Config.ARGB_8888);
+            PixelCopy.request(mSurface,destBitmap,listener,cameraHandler);
         } catch (Exception e) {
             Log.e(TAG,"error");
         }
