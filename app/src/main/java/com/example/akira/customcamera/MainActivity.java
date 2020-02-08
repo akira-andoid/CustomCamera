@@ -180,9 +180,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Bitmap destBitmap = Bitmap.createBitmap(mSurfaceView.getHeight(), mSurfaceView.getWidth(),
                     Bitmap.Config.ARGB_8888);
             PixelCopy.request(mSurface,destBitmap,listener,cameraHandler);
+            File saveFile = new File(mSavePath.getPath(),"CustomCamera/test.jpg");
+            FileOutputStream fos = new FileOutputStream(saveFile);
+            destBitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
+            fos.close();
+            mCameraCaptureSession.setRepeatingRequest(mCaptureRequest,null,null);
         } catch (Exception e) {
             Log.e(TAG,"error");
         }
+        mediaScannerConnection.connect();
     }
 
     PixelCopy.OnPixelCopyFinishedListener listener = new PixelCopy.OnPixelCopyFinishedListener() {
